@@ -173,29 +173,46 @@ export default function EmpleadosScreen() {
              areasConConteo.length === 0 ? (
                 <View style={s.emptyBox}>
                   <LayoutGrid size={24} color="#CBD5E1" />
-                  <Text style={s.emptyText}>No hay áreas</Text>
+                  <Text style={s.emptyText}>No hay áreas registradas</Text>
                 </View>
               ) : (
                 areasConConteo.map((area) => (
-                  <View key={area.id} style={s.listItem}>
-                    <View style={s.listItemAvatar}><LayoutGrid size={14} color="#8B2F2F" /></View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={s.listItemName}>{area.nombre}</Text>
-                      <Text style={s.listItemSub}>{area.count} empleados</Text>
+                  <View key={area.id} style={[s.listItem, { flexDirection: 'column', alignItems: 'stretch' }]}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <View style={s.listItemAvatar}><LayoutGrid size={14} color="#8B2F2F" /></View>
+                        <View style={{ flex: 1 }}>
+                        <Text style={s.listItemName}>{area.nombre}</Text>
+                        <Text style={s.listItemSub}>{area.count} empleados asociados</Text>
+                        </View>
+                        <View style={s.itemActions}>
+                            <Pressable onPress={() => openAreaModal(area)}><Edit2 size={16} color="#64748B" /></Pressable>
+                            <Pressable onPress={() => setConfirm({
+                                visible: true,
+                                title: "Eliminar Área",
+                                message: `¿Estás seguro de eliminar "${area.nombre}"?`,
+                                onConfirm: () => { deleteArea(area.id); showNotif("Área eliminada"); setConfirm(null); }
+                            })}><Trash2 size={16} color="#EF4444" /></Pressable>
+                        </View>
                     </View>
-                    <View style={s.itemActions}>
-                        <Pressable onPress={() => openAreaModal(area)}><Edit2 size={16} color="#64748B" /></Pressable>
-                        <Pressable onPress={() => setConfirm({
-                            visible: true,
-                            title: "Eliminar Área",
-                            message: `¿Estás seguro de eliminar "${area.nombre}"?`,
-                            onConfirm: () => { deleteArea(area.id); showNotif("Área eliminada"); setConfirm(null); }
-                        })}><Trash2 size={16} color="#EF4444" /></Pressable>
+                    
+                    {/* Lista de empleados en esta área */}
+                    <View style={{ marginTop: 12, paddingLeft: 48, gap: 8 }}>
+                        {empleados.filter(e => e.areaId === area.id).length === 0 ? (
+                            <Text style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic' }}>Sin empleados asignados</Text>
+                        ) : (
+                            empleados.filter(e => e.areaId === area.id).map(emp => (
+                                <View key={emp.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                                    <View style={{ width: 4, height: 4, borderRadius: 2, backgroundColor: '#CBD5E1' }} />
+                                    <Text style={{ fontSize: 13, color: '#475569', fontWeight: '500' }}>{emp.nombre}</Text>
+                                </View>
+                            ))
+                        )}
                     </View>
                   </View>
                 ))
               )
           ) : (
+
              (empleados || []).length === 0 ? (
                 <View style={s.emptyBox}>
                   <Users size={24} color="#CBD5E1" />

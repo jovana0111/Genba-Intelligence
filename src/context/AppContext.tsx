@@ -233,13 +233,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       // Cargar empleados por defecto si no se han cargado antes
       const defaultsLoaded = localStorage.getItem("asistencia_defaults_loaded");
       if (!defaultsLoaded) {
-        let generalArea = loadedAreas.find(
-          (a) => a.nombre.toUpperCase() === "GENERAL"
-        );
-        if (!generalArea) {
-          generalArea = { id: genId(), nombre: "GENERAL" };
-          loadedAreas.push(generalArea);
-        }
+        const DEFAULT_AREAS = [
+          "GENERAL",
+          "Área Ensamble A",
+          "Área Ensamble B",
+          "Control Central",
+          "Troquelado A",
+          "Troquelado B",
+          "Almacén General"
+        ];
+        
+        DEFAULT_AREAS.forEach(name => {
+          if (!loadedAreas.some(a => a.nombre.toLowerCase() === name.toLowerCase())) {
+            loadedAreas.push({ id: genId() + Math.random().toString(36).substr(2, 4), nombre: name });
+          }
+        });
+
+        const generalArea = loadedAreas.find(a => a.nombre.toUpperCase() === "GENERAL")!;
+
 
         EMPLEADOS_DEFAULT.forEach((nombre) => {
           const exists = loadedEmpleados.some(

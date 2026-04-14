@@ -1,4 +1,4 @@
-import { User, PlusCircle } from "lucide-react";
+import { User, PlusCircle, HelpCircle } from "lucide-react";
 import { useCallback, useState } from "react";
 import {
   Alert,
@@ -112,185 +112,219 @@ export default function RegistroScreen() {
     actualizarHorasTurno(turnoIdx);
   }, [empleadoSel, entrada, salida, turnoIdx, areas, addRegistro]);
 
+  const [showHelp, setShowHelp] = useState(false);
+
   const s = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     header: {
       backgroundColor: colors.headerBg,
-      paddingTop: 14,
-      paddingBottom: 18,
+      paddingTop: 16,
+      paddingBottom: 22,
       paddingHorizontal: 20,
       flexDirection: "row",
       alignItems: "center",
-      gap: 12,
+      gap: 14,
+      borderBottomLeftRadius: 32,
+      borderBottomRightRadius: 32,
     },
-    logo: { width: 38, height: 38, borderRadius: 8 },
+    logo: { width: 44, height: 44, borderRadius: 12 },
     headerTextWrap: { flex: 1 },
-    headerTitle: {
-      fontSize: 18,
-      fontWeight: "700" as const,
-      color: colors.headerFg,
-      letterSpacing: -0.3,
+    headerTitle: { fontSize: 20, fontWeight: "900", color: colors.headerFg, letterSpacing: -0.5 },
+    headerSubtitle: { fontSize: 11, color: "rgba(241,230,210,0.6)", fontWeight: "600" },
+    helpBtn: { 
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    headerSub: {
-      fontSize: 11,
-      color: "rgba(241,230,210,0.65)",
-      marginTop: 1,
+    tooltipOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        padding: 24,
+        zIndex: 2000,
     },
+    tooltipCard: {
+        padding: 24,
+        borderRadius: 30,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 20 },
+        shadowOpacity: 0.3,
+        shadowRadius: 30,
+    },
+    tooltipText: { color: '#2D1D1D', fontSize: 13, lineHeight: 18, marginBottom: 12, fontWeight: '500' },
+
     scroll: { flex: 1 },
     sectionLabel: {
-      fontSize: 10,
-      fontWeight: "700" as const,
-      color: colors.secondary,
-      letterSpacing: 1.1,
+      fontSize: 11,
+      fontWeight: "800",
+      color: colors.mutedForeground,
+      letterSpacing: 1.2,
       textTransform: "uppercase",
-      marginHorizontal: 16,
-      marginTop: 16,
-      marginBottom: 8,
+      marginHorizontal: 24,
+      marginTop: 24,
+      marginBottom: 10,
     },
     card: {
-      backgroundColor: colors.card,
-      borderRadius: 16,
-      padding: 16,
+      backgroundColor: '#fff',
+      borderRadius: 24,
+      padding: 20,
       marginHorizontal: 16,
-      marginBottom: 10,
+      marginBottom: 12,
       shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 2,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.04,
+      shadowRadius: 15,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.03)',
     },
     fieldLabel: {
-      fontSize: 10,
-      fontWeight: "600" as const,
+      fontSize: 11,
+      fontWeight: "700",
       color: colors.secondary,
-      letterSpacing: 0.7,
+      letterSpacing: 0.5,
       textTransform: "uppercase",
-      marginBottom: 5,
+      marginBottom: 6,
     },
     input: {
-      backgroundColor: colors.background,
-      borderWidth: 1.2,
-      borderColor: colors.border,
-      borderRadius: 10,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      fontSize: 14,
+      backgroundColor: '#F8FAFC',
+      borderWidth: 1.5,
+      borderColor: '#E2E8F0',
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      fontSize: 15,
       color: colors.foreground,
-      marginBottom: 12,
+      marginBottom: 14,
+      fontWeight: '600'
     },
     areaDisplay: {
       backgroundColor: colors.accent,
-      borderRadius: 10,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
-      borderWidth: 1.2,
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
+      borderWidth: 1.5,
       borderColor: colors.border,
     },
     areaText: {
-      fontSize: 14,
+      fontSize: 15,
       color: colors.primary,
-      fontWeight: '700',
+      fontWeight: '800',
     },
     areaInput: {
         backgroundColor: colors.accent,
-        borderRadius: 10,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        borderWidth: 1.2,
+        borderRadius: 14,
+        paddingHorizontal: 14,
+        paddingVertical: 12,
+        borderWidth: 1.5,
         borderColor: colors.border,
-        fontSize: 14,
+        fontSize: 15,
         color: colors.primary,
-        fontWeight: '700',
+        fontWeight: '800',
     },
     sugerencias: {
-      backgroundColor: colors.card,
-      borderRadius: 10,
-      borderWidth: 1,
+      backgroundColor: '#fff',
+      borderRadius: 14,
+      borderWidth: 1.5,
       borderColor: colors.border,
-      marginBottom: 12,
-      marginTop: -6,
+      marginBottom: 14,
+      marginTop: -10,
       overflow: "hidden",
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.1,
+      shadowRadius: 20,
+      zIndex: 100,
     },
     sugerencia: {
-      paddingHorizontal: 12,
-      paddingVertical: 10,
+      paddingHorizontal: 14,
+      paddingVertical: 12,
       borderBottomWidth: 1,
-      borderBottomColor: colors.border,
+      borderBottomColor: '#F1F5F9',
       flexDirection: "row",
       alignItems: "center",
-      gap: 8,
+      gap: 10,
     },
-    sugerenciaText: { fontSize: 13, color: colors.foreground, flex: 1 },
-    sugerenciaArea: { fontSize: 11, color: colors.secondary },
-    turnoRow: { flexDirection: "row", gap: 8, marginBottom: 14 },
+    sugerenciaText: { fontSize: 14, color: colors.foreground, flex: 1, fontWeight: '700' },
+    sugerenciaArea: { fontSize: 12, color: colors.secondary, fontWeight: '500' },
+    turnoRow: { flexDirection: "row", gap: 10, marginBottom: 16 },
     turnoBtn: {
       flex: 1,
-      paddingVertical: 10,
-      paddingHorizontal: 6,
-      borderRadius: 10,
-      borderWidth: 1.2,
-      borderColor: colors.border,
+      paddingVertical: 12,
+      paddingHorizontal: 8,
+      borderRadius: 16,
+      borderWidth: 1.5,
+      borderColor: '#E2E8F0',
       alignItems: "center",
-      backgroundColor: colors.background,
+      backgroundColor: '#F8FAFC',
     },
     turnoBtnActive: {
       backgroundColor: colors.primary,
       borderColor: colors.primary,
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
     },
-    turnoBtnLabel: { fontSize: 12, fontWeight: "700" as const, color: colors.mutedForeground },
+    turnoBtnLabel: { fontSize: 13, fontWeight: "800", color: colors.mutedForeground },
     turnoBtnLabelActive: { color: "#fff" },
-    turnoBtnHour: { fontSize: 10, color: colors.mutedForeground, marginTop: 1 },
-    turnoBtnHourActive: { color: "rgba(255,255,255,0.75)" },
-    timeRow: { flexDirection: "row", gap: 8 },
+    turnoBtnHour: { fontSize: 10, color: colors.mutedForeground, marginTop: 2, fontWeight: '600' },
+    turnoBtnHourActive: { color: "rgba(255,255,255,0.8)" },
+    timeRow: { flexDirection: "row", gap: 10 },
     timeHalf: { flex: 1 },
     addBtn: {
       backgroundColor: colors.primary,
-      borderRadius: 12,
-      paddingVertical: 14,
+      borderRadius: 20,
+      paddingVertical: 18,
       alignItems: "center",
       flexDirection: "row",
       justifyContent: "center",
-      gap: 8,
+      gap: 10,
       marginHorizontal: 16,
-      marginBottom: 20,
+      marginBottom: 24,
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.2,
+      shadowRadius: 15,
     },
     addBtnText: {
-      fontSize: 15,
-      fontWeight: "700" as const,
+      fontSize: 16,
+      fontWeight: "900",
       color: "#fff",
-      letterSpacing: 0.3,
+      letterSpacing: 0.5,
     },
     emptyBanner: {
-      backgroundColor: "#FFF8F0",
-      borderLeftWidth: 3,
-      borderLeftColor: colors.primary,
-      borderRadius: 8,
-      padding: 10,
+      backgroundColor: "#FFF1F2",
+      borderLeftWidth: 4,
+      borderLeftColor: colors.destructive,
+      borderRadius: 12,
+      padding: 14,
       marginHorizontal: 16,
-      marginTop: 10,
+      marginTop: 16,
+      marginBottom: 4,
     },
-    emptyBannerText: { fontSize: 12, color: colors.primary },
+    emptyBannerText: { fontSize: 13, color: colors.destructive, fontWeight: '700' },
     bottomPad: { height: 60 },
   });
+
 
   return (
     <View style={s.container}>
       <View style={s.header}>
-        <Image
-          source={logo as any}
-          style={s.logo}
-          resizeMode="contain"
-        />
+        <Image source={logo as any} style={s.logo} resizeMode="contain" />
         <View style={s.headerTextWrap}>
-          <Text style={s.headerTitle}>Registro de Asistencia</Text>
-          <Text style={s.headerSub}>
-            {new Date().toLocaleDateString("es-MX", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </Text>
+          <Text style={s.headerTitle}>Registro</Text>
+          <Text style={s.headerSubtitle}>Gestión de Personal</Text>
         </View>
+        <Pressable style={s.helpBtn} onPress={() => setShowHelp(!showHelp)}>
+            <HelpCircle size={22} color={colors.headerFg} />
+        </Pressable>
       </View>
 
       {empleados.length === 0 && (
@@ -301,7 +335,27 @@ export default function RegistroScreen() {
         </View>
       )}
 
-      <ScrollView style={s.scroll} keyboardShouldPersistTaps="handled">
+      {showHelp && (
+          <View style={s.tooltipOverlay}>
+              <View style={[s.tooltipCard, { backgroundColor: '#FDFBF7', borderColor: '#8B2F2F', borderWidth: 1.5 }]}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                      <HelpCircle size={28} color="#8B2F2F" />
+                      <Text style={{ fontSize: 18, fontWeight: '900', color: '#8B2F2F', marginLeft: 10 }}>Procedimiento</Text>
+                  </View>
+                  <Text style={s.tooltipText}><Text style={{ fontWeight: '900', color: '#8B2F2F' }}>• IDENTIFICACIÓN:</Text> Busque al empleado por nombre.</Text>
+                  <Text style={s.tooltipText}><Text style={{ fontWeight: '900', color: '#8B2F2F' }}>• ASIGNACIÓN:</Text> Seleccione el turno y verifique el área.</Text>
+                  <Text style={s.tooltipText}><Text style={{ fontWeight: '900', color: '#8B2F2F' }}>• VALIDACIÓN:</Text> Revise las horas de entrada/salida.</Text>
+                  
+                  <Pressable style={{ alignSelf: 'center', marginTop: 20, padding: 12, backgroundColor: '#8B2F2F', borderRadius: 16, width: '100%', alignItems: 'center' }} onPress={() => setShowHelp(false)}>
+                      <Text style={{ color: '#fff', fontWeight: '900', fontSize: 13 }}>Entendido</Text>
+                  </Pressable>
+              </View>
+          </View>
+      )}
+
+
+
+      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
         <Text style={s.sectionLabel}>Datos del empleado</Text>
         <View style={s.card}>
           <Text style={s.fieldLabel}>Buscar empleado</Text>

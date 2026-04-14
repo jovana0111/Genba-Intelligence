@@ -21,19 +21,30 @@ const GEOFENCES = [
 export default function Stations() {
   const colors = useColors();
   const navigate = useNavigate();
-  const { registros, empleados, addAnomalia } = useApp();
+  const { registros, empleados, areas, addAnomalia } = useApp();
   
   const empleadosActivos = useMemo(() => {
-    const idsActivos = new Set(registros.map(r => r.empleadoId));
-    return empleados.filter(e => idsActivos.has(e.id));
+    const activeEmpIds = new Set(registros.map(r => r.empleadoId));
+    return empleados.filter(e => activeEmpIds.has(e.id));
   }, [registros, empleados]);
+
 
   const [posiciones, setPosiciones] = useState<any[]>([]);
   const lastAlerts = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
-    const inicial = empleadosActivos.map((emp, idx) => {
-      const fence = GEOFENCES[idx % GEOFENCES.length];
+    const inicial = empleadosActivos.map((emp) => {
+      const empArea = areas.find(a => a.id === emp.areaId);
+      const areaName = empArea?.nombre.toLowerCase() || "";
+      
+      // Intentar encontrar la geocerca que coincida con el nombre del área
+      let fence = GEOFENCES.find(f => areaName.includes(f.nombre.toLowerCase()) || f.nombre.toLowerCase().includes(areaName));
+      
+      // Si no hay coincidencia exacta, usar una por defecto o aleatoria
+      if (!fence) {
+          fence = GEOFENCES[Math.floor(Math.random() * GEOFENCES.length)];
+      }
+
       return {
         id: emp.id,
         nombre: emp.nombre,
@@ -69,7 +80,8 @@ export default function Stations() {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [empleadosActivos, addAnomalia]);
+  }, [empleadosActivos, addAnomalia, areas]);
+
 
   const numAlertas = posiciones.filter(p => p.alerta).length;
 

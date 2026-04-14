@@ -1,13 +1,16 @@
 # Etapa de construcción
 FROM node:20-alpine AS build
 
+# Deshabilitar telemetría de herramientas
+ENV NEXT_TELEMETRY_DISABLED 1
+
 WORKDIR /app
 
-# Copiar archivos de dependencias
+# Instalar dependencias primero (aprovechar cache de Docker)
 COPY package*.json ./
-RUN npm install
+RUN npm install --frozen-lockfile || npm install
 
-# Copiar el resto del código y construir
+# Copiar el resto y construir
 COPY . .
 RUN npm run build
 
@@ -17,8 +20,7 @@ FROM nginx:stable-alpine
 # Copiar los archivos construidos al directorio de nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar una configuración personalizada de nginx para manejar SPA (Single Page Application)
-# Esto es vital para que las rutas internas de React funcionen correctamente en producción
+# Configuración de Nginx para manejar SPA y usar el puerto dinámico de Render
 RUN echo 'server { \
     listen 80; \
     location / { \
@@ -28,6 +30,6 @@ RUN echo 'server { \
     } \
 }' > /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Render asigna dinámicamente el puerto a la variable $PORT.
+# Este comando reemplaza el puerto 80 por el valor de $PORT al iniciar el contenedor.
+CMD /bin/sh -c "sed -i 's/listen 80;/listen '\"${PORT:-80}\"';/g' /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"

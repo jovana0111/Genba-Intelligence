@@ -55,37 +55,44 @@ export default function Layout() {
 const styles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#210706", // Dark background for the desert effect outside the phone
+    backgroundColor: "#160504", // Deeper dark for outer container
   },
   mainWrapper: {
     flex: 1,
     width: "100%",
-    maxWidth: 500,
+    maxWidth: 480, // Slightly narrower for better focus on content
     alignSelf: "center",
     backgroundColor: colors.background,
-    boxShadow: "0 0 20px rgba(0,0,0,0.3)", // Web shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 30,
+    overflow: 'hidden',
   },
   content: {
     flex: 1,
   },
   tabBar: {
     flexDirection: "row",
-    height: 64,
-    backgroundColor: colors.card,
+    height: 72,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    paddingBottom: 8,
+    borderTopColor: 'rgba(0,0,0,0.05)',
+    paddingBottom: 12,
+    backdropFilter: 'blur(10px)' as any, // Web only
   },
   tabItem: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 6,
+    paddingTop: 8,
   },
   tabText: {
-    fontSize: 10,
-    marginTop: 3,
-    fontWeight: "600",
+    fontSize: 11,
+    marginTop: 4,
+    fontWeight: "800",
+    letterSpacing: 0.2,
   },
 });
+
 

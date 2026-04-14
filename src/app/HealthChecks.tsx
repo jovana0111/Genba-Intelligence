@@ -30,90 +30,130 @@ export default function HealthChecks() {
     },
     backBtn: { padding: 8, marginLeft: -8, borderRadius: 20 },
     headerTitleWrap: { flex: 1 },
-    headerTitle: { fontSize: 18, fontWeight: "700", color: colors.headerFg },
+    headerTitle: { fontSize: 20, fontWeight: "900", color: colors.headerFg, letterSpacing: -0.5 },
     scroll: { flex: 1, padding: 16 },
     search: {
       backgroundColor: '#fff',
-      borderWidth: 1,
+      borderWidth: 1.5,
       borderColor: colors.border,
-      borderRadius: 12,
+      borderRadius: 16,
       paddingHorizontal: 16,
-      paddingVertical: 12,
-      fontSize: 15,
+      paddingVertical: 14,
+      fontSize: 16,
       color: colors.foreground,
-      marginBottom: 16,
+      marginBottom: 20,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 10,
     },
     empCard: {
       backgroundColor: '#fff',
-      borderRadius: 16,
+      borderRadius: 20,
       padding: 16,
-      marginBottom: 10,
+      marginBottom: 12,
       flexDirection: 'row',
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: colors.border
+      borderColor: colors.border,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.05,
+      shadowRadius: 12,
     },
     empInitial: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 44,
+        height: 44,
+        borderRadius: 22,
         backgroundColor: colors.accent,
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 12
+        marginRight: 14
     },
-    empInitialText: { color: colors.primary, fontWeight: '800', fontSize: 16 },
+    empInitialText: { color: colors.primary, fontWeight: '900', fontSize: 18 },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.6)',
-        justifyContent: 'flex-end'
+        backgroundColor: 'rgba(33, 7, 6, 0.4)',
+        justifyContent: 'flex-end',
+        backdropFilter: 'blur(4px)' as any, // Web only
     },
     modalContent: {
         backgroundColor: '#fff',
-        borderTopLeftRadius: 32,
-        borderTopRightRadius: 32,
+        borderTopLeftRadius: 40,
+        borderTopRightRadius: 40,
         padding: 24,
         paddingBottom: 40,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
     },
     modalHeader: {
         alignItems: 'center',
-        marginBottom: 20
+        marginBottom: 28
     },
     modalHandle: {
-        width: 40,
-        height: 4,
-        backgroundColor: colors.border,
-        borderRadius: 2,
-        marginBottom: 20
+        width: 44,
+        height: 5,
+        backgroundColor: '#E2E8F0',
+        borderRadius: 3,
+        marginBottom: 24,
+        alignSelf: 'center'
     },
-    modalTitle: { fontSize: 20, fontWeight: '900', color: colors.foreground },
+    modalTitle: { fontSize: 24, fontWeight: '900', color: colors.foreground, marginBottom: 4 },
     biometricGrid: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        gap: 10,
-        marginBottom: 24
+        gap: 12,
+        marginBottom: 28,
+        flexWrap: 'wrap' // Allow wrapping on very small screens
     },
     bioInputBox: {
         flex: 1,
-        backgroundColor: '#f8fafc',
-        borderRadius: 20,
+        minWidth: 100, // Ensure they don't get TOO squashed
+        backgroundColor: '#F8FAFC',
+        borderRadius: 24,
         padding: 16,
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: colors.border
+        borderWidth: 1.5,
+        borderColor: '#F1F5F9',
+        justifyContent: 'center'
     },
-    bioLabel: { fontSize: 10, fontWeight: '700', color: colors.secondary, marginTop: 8, textTransform: 'uppercase' },
-    bioValue: { fontSize: 18, fontWeight: '900', color: colors.foreground, marginTop: 4 },
+    bioLabel: { fontSize: 11, fontWeight: '800', color: colors.mutedForeground, marginTop: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
+    bioValue: { 
+        fontSize: 22, 
+        fontWeight: '900', 
+        color: colors.foreground, 
+        marginTop: 6,
+        textAlign: 'center',
+        padding: 0,
+        width: '100%',
+    },
     submitBtn: {
         backgroundColor: colors.primary,
-        padding: 18,
-        borderRadius: 20,
+        padding: 20,
+        borderRadius: 24,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 10
+        gap: 12,
+        shadowColor: colors.primary,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.2,
+        shadowRadius: 15,
     },
-    submitText: { color: '#fff', fontSize: 16, fontWeight: '800' }
+    submitText: { color: '#fff', fontSize: 17, fontWeight: '900' },
+    alertBox: { 
+        backgroundColor: '#FFF1F2', 
+        padding: 16, 
+        borderRadius: 20, 
+        marginBottom: 28, 
+        flexDirection: 'row', 
+        gap: 12, 
+        alignItems: 'flex-start',
+        borderWidth: 1,
+        borderColor: '#FFE4E6'
+    }
   });
 
   const filtrados = empleados.filter((e) =>
@@ -152,7 +192,10 @@ export default function HealthChecks() {
   return (
     <View style={s.container}>
       <View style={s.header}>
-        <Pressable style={s.backBtn} onPress={() => navigate(-1)}>
+        <Pressable 
+          style={({ pressed }: any) => [s.backBtn, { opacity: pressed ? 0.7 : 1 }]} 
+          onPress={() => navigate(-1)}
+        >
           <ArrowLeft size={22} color={colors.headerFg} />
         </Pressable>
         <View style={s.headerTitleWrap}>
@@ -161,24 +204,29 @@ export default function HealthChecks() {
         <HeartPulse size={24} color="#EF4444" />
       </View>
 
-      <ScrollView style={s.scroll}>
+      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
         <TextInput
           style={s.search}
           placeholder="Escanear o buscar empleado..."
+          placeholderTextColor={colors.mutedForeground}
           value={busqueda}
           onChangeText={setBusqueda}
         />
 
         {filtrados.map((emp) => (
-            <Pressable key={emp.id} style={s.empCard} onPress={() => setSelectedEmp(emp)}>
+            <Pressable 
+                key={emp.id} 
+                style={({ pressed }: any) => [s.empCard, { transform: [{ scale: pressed ? 0.98 : 1 }] }]} 
+                onPress={() => setSelectedEmp(emp)}
+            >
                 <View style={s.empInitial}>
                     <Text style={s.empInitialText}>{emp.nombre[0]}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <Text style={{ fontWeight: '700', color: colors.foreground }}>{emp.nombre}</Text>
-                    <Text style={{ fontSize: 11, color: colors.secondary }}>{areas.find(a => a.id === emp.areaId)?.nombre}</Text>
+                    <Text style={{ fontWeight: '800', color: colors.foreground, fontSize: 16 }}>{emp.nombre}</Text>
+                    <Text style={{ fontSize: 13, color: colors.secondary, marginTop: 2 }}>{areas.find(a => a.id === emp.areaId)?.nombre}</Text>
                 </View>
-                <CheckCircle2 size={20} color={colors.border} />
+                <CheckCircle2 size={22} color={colors.border} />
             </Pressable>
         ))}
       </ScrollView>
@@ -189,60 +237,73 @@ export default function HealthChecks() {
                   <View style={s.modalHandle} />
                   <View style={s.modalHeader}>
                       <Text style={s.modalTitle}>{selectedEmp?.nombre}</Text>
-                      <Text style={{ fontSize: 12, color: colors.secondary }}>Ingreso Biométrico Manual</Text>
+                      <Text style={{ fontSize: 14, color: colors.secondary, fontWeight: '500' }}>Ingreso Biométrico Manual</Text>
                   </View>
 
                   <View style={s.biometricGrid}>
-                      <View style={s.bioInputBox}>
-                          <Thermometer size={24} color="#F59E0B" />
+                      <View style={[s.bioInputBox, temp && parseFloat(temp) > 37.5 && { borderColor: '#FECACA', backgroundColor: '#FFF5F5' }]}>
+                          <Thermometer size={26} color="#F59E0B" />
                           <Text style={s.bioLabel}>Temp °C</Text>
                           <TextInput 
                             style={s.bioValue} 
                             value={temp} 
                             onChangeText={setTemp} 
                             keyboardType="numeric" 
+                            placeholder="0.0"
                            />
                       </View>
-                      <View style={s.bioInputBox}>
-                          <Activity size={24} color="#EF4444" />
+                      <View style={[s.bioInputBox, bpm && parseInt(bpm) > 110 && { borderColor: '#FECACA', backgroundColor: '#FFF5F5' }]}>
+                          <Activity size={26} color="#EF4444" />
                           <Text style={s.bioLabel}>BPM</Text>
                           <TextInput 
                             style={s.bioValue} 
                             value={bpm} 
                             onChangeText={setBpm} 
                             keyboardType="numeric" 
+                            placeholder="0"
                           />
                       </View>
-                      <View style={s.bioInputBox}>
-                          <Droplets size={24} color="#3B82F6" />
+                      <View style={[s.bioInputBox, oxygen && parseInt(oxygen) < 94 && { borderColor: '#FECACA', backgroundColor: '#FFF5F5' }]}>
+                          <Droplets size={26} color="#3B82F6" />
                           <Text style={s.bioLabel}>Oxygen %</Text>
                           <TextInput 
                             style={s.bioValue} 
                             value={oxygen} 
                             onChangeText={setOxygen} 
                             keyboardType="numeric" 
+                            placeholder="0"
                           />
                       </View>
                   </View>
 
-                  <View style={{ backgroundColor: '#fef2f2', padding: 12, borderRadius: 12, marginBottom: 24, flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                      <ShieldAlert size={18} color="#EF4444" />
-                      <Text style={{ fontSize: 11, color: '#991B1B', fontWeight: '500' }}>
-                          Si los valores superan el límite estándar (37.5°C), se enviará una notificación a Seguridad Planta.
-                      </Text>
+                  <View style={s.alertBox}>
+                      <ShieldAlert size={20} color="#EF4444" style={{ marginTop: 2 }} />
+                      <View style={{ flex: 1 }}>
+                          <Text style={{ fontSize: 13, color: '#991B1B', fontWeight: '700', marginBottom: 2 }}>Protocolo de Seguridad</Text>
+                          <Text style={{ fontSize: 12, color: '#991B1B', lineHeight: 16 }}>
+                              Si los valores superan el límite estándar (37.5°C), se enviará una notificación automática a Seguridad Planta.
+                          </Text>
+                      </View>
                   </View>
 
-                  <Pressable style={s.submitBtn} onPress={handleSaveHealth}>
+                  <Pressable 
+                    style={({ pressed }: any) => [s.submitBtn, { opacity: pressed ? 0.9 : 1, transform: [{ scale: pressed ? 0.99 : 1 }] }]} 
+                    onPress={handleSaveHealth}
+                  >
                       <Text style={s.submitText}>Registrar Vitals</Text>
                       <Send size={20} color="#fff" />
                   </Pressable>
 
-                  <Pressable style={{ marginTop: 16, alignItems: 'center' }} onPress={() => setSelectedEmp(null)}>
-                      <Text style={{ color: colors.secondary, fontWeight: '700' }}>Cancelar</Text>
+                  <Pressable 
+                    style={{ marginTop: 20, padding: 12, alignItems: 'center' }} 
+                    onPress={() => setSelectedEmp(null)}
+                  >
+                      <Text style={{ color: colors.secondary, fontWeight: '700', fontSize: 15 }}>Cerrar</Text>
                   </Pressable>
               </View>
           </View>
       </Modal>
     </View>
+
   );
 }
