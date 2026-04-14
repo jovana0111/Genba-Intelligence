@@ -44,31 +44,36 @@ export default function Kiosk() {
       shadowOffset: { width: 0, height: 10 },
       shadowOpacity: 0.2,
       shadowRadius: 20,
-      zIndex: 10,
+      zIndex: 100,
+      position: 'sticky' as any,
+      top: 0,
     },
     helpKioskBtn: {
         position: 'absolute',
         top: 20,
         right: 20,
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        padding: 10,
-        borderRadius: 20,
-        zIndex: 20,
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 110,
     },
-    logo: { width: 64, height: 64, borderRadius: 16, marginBottom: 16 },
+    logo: { width: 50, height: 50, borderRadius: 12, marginBottom: 8 },
     title: {
-      fontSize: 26,
+      fontSize: 18,
       fontWeight: "900",
       color: colors.headerFg,
-      letterSpacing: -1,
+      letterSpacing: -0.5,
       textAlign: "center",
     },
     subtitle: {
-      fontSize: 14,
-      color: "rgba(241,230,210,0.6)",
-      marginTop: 6,
+      fontSize: 12,
+      color: "rgba(241,230,210,0.5)",
+      marginTop: 2,
       textAlign: "center",
-      fontWeight: "500"
+      fontWeight: "600"
     },
     tooltipOverlay: {
         position: 'absolute',
@@ -79,7 +84,7 @@ export default function Kiosk() {
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'center',
         padding: 24,
-        zIndex: 1000,
+        zIndex: 5000,
     },
     tooltipCard: {
         padding: 24,
@@ -91,11 +96,12 @@ export default function Kiosk() {
     },
     tooltipText: { color: '#2D1D1D', fontSize: 13, lineHeight: 18, marginBottom: 12, fontWeight: '500' },
 
-    scroll: { flex: 1, padding: 16 },
+    scroll: { flex: 1 },
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "space-between",
+      padding: 16,
       paddingBottom: 60,
       gap: 12,
     },
@@ -133,10 +139,11 @@ export default function Kiosk() {
 
   return (
     <View style={s.container}>
+      <Pressable style={s.helpKioskBtn} onPress={() => setShowHelp(true)}>
+          <HelpCircle size={22} color={colors.headerFg} />
+      </Pressable>
+
       <View style={s.header}>
-        <Pressable style={s.helpKioskBtn} onPress={() => setShowHelp(true)}>
-            <HelpCircle size={22} color={colors.headerFg} />
-        </Pressable>
         <Image source={logo as any} style={s.logo} resizeMode="contain" />
         <Text style={s.title}>Genba Intelligence</Text>
         <Text style={s.subtitle}>Kiosco de Aplicaciones</Text>
@@ -160,8 +167,6 @@ export default function Kiosk() {
               </View>
           </View>
       )}
-
-
 
       <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
         <View style={s.grid}>

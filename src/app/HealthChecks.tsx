@@ -27,7 +27,15 @@ export default function HealthChecks() {
       flexDirection: "row",
       alignItems: "center",
       gap: 12,
+      position: 'sticky' as any,
+      top: 0,
+      zIndex: 100,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 10,
     },
+
     backBtn: { padding: 8, marginLeft: -8, borderRadius: 20 },
     headerTitleWrap: { flex: 1 },
     headerTitle: { fontSize: 20, fontWeight: "900", color: colors.headerFg, letterSpacing: -0.5 },
@@ -73,21 +81,25 @@ export default function HealthChecks() {
     empInitialText: { color: colors.primary, fontWeight: '900', fontSize: 18 },
     modalOverlay: {
         flex: 1,
-        backgroundColor: 'rgba(33, 7, 6, 0.4)',
-        justifyContent: 'flex-end',
-        backdropFilter: 'blur(4px)' as any, // Web only
+        backgroundColor: 'rgba(33, 7, 6, 0.6)',
+        justifyContent: 'center', // Centered for floating effect
+        alignItems: 'center',
+        padding: 20,
+        backdropFilter: 'blur(8px)' as any,
     },
     modalContent: {
         backgroundColor: '#fff',
-        borderTopLeftRadius: 40,
-        borderTopRightRadius: 40,
-        padding: 24,
-        paddingBottom: 40,
+        borderRadius: 40, // Uniform radius for floating look
+        padding: 32,
+        width: '100%',
+        maxWidth: 600, // Limit width on PC
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: -10 },
-        shadowOpacity: 0.1,
-        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 20 },
+        shadowOpacity: 0.2,
+        shadowRadius: 30,
+        elevation: 10,
     },
+
     modalHeader: {
         alignItems: 'center',
         marginBottom: 28
