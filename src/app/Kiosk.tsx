@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Pressable, ScrollView, Image } from "react-native";
+import { View, StyleSheet, Text, Pressable, ScrollView, Image, Animated } from "react-native";
 import { useNavigate } from "react-router-dom";
 import { useColors } from "../hooks/useColors";
 import { 
@@ -13,12 +13,33 @@ import {
   X 
 } from "lucide-react";
 import logo from "../../assets/images/logo.png";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function Kiosk() {
   const colors = useColors();
   const navigate = useNavigate();
   const [showHelp, setShowHelp] = useState(false);
+  
+  const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Header Animation values
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [220, 100],
+    extrapolate: 'clamp'
+  });
+
+  const logoSize = scrollY.interpolate({
+    inputRange: [0, 100],
+    outputRange: [64, 40],
+    extrapolate: 'clamp'
+  });
+
+  const titleOpacity = scrollY.interpolate({
+    inputRange: [0, 50],
+    outputRange: [1, 0],
+    extrapolate: 'clamp'
+  });
 
   const menuItems = [
     { title: "Dashboard Mieruka", icon: LayoutDashboard, route: "/mieruka", color: "#3B82F6" }, // Blue
@@ -34,10 +55,9 @@ export default function Kiosk() {
     container: { flex: 1, backgroundColor: colors.background },
     header: {
       backgroundColor: colors.headerBg,
-      paddingTop: 32,
-      paddingBottom: 40,
       paddingHorizontal: 24,
       alignItems: "center",
+      justifyContent: 'center',
       borderBottomLeftRadius: 40,
       borderBottomRightRadius: 40,
       shadowColor: "#000",
@@ -45,8 +65,10 @@ export default function Kiosk() {
       shadowOpacity: 0.2,
       shadowRadius: 20,
       zIndex: 100,
-      position: 'sticky' as any,
+      position: 'absolute',
       top: 0,
+      left: 0,
+      right: 0,
     },
     helpKioskBtn: {
         position: 'absolute',
@@ -58,15 +80,16 @@ export default function Kiosk() {
         borderRadius: 18,
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 110,
+        zIndex: 200, // Above animated header
     },
-    logo: { width: 50, height: 50, borderRadius: 12, marginBottom: 8 },
+    logo: { borderRadius: 12 },
     title: {
-      fontSize: 18,
+      fontSize: 22,
       fontWeight: "900",
       color: colors.headerFg,
-      letterSpacing: -0.5,
+      letterSpacing: -1,
       textAlign: "center",
+      marginTop: 8
     },
     subtitle: {
       fontSize: 12,
@@ -81,27 +104,30 @@ export default function Kiosk() {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'rgba(0,0,0,0.6)',
         justifyContent: 'center',
+        alignItems: 'center',
         padding: 24,
         zIndex: 5000,
     },
     tooltipCard: {
         padding: 24,
         borderRadius: 30,
+        width: '100%',
+        maxWidth: 500,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 20 },
         shadowOpacity: 0.3,
         shadowRadius: 30,
     },
     tooltipText: { color: '#2D1D1D', fontSize: 13, lineHeight: 18, marginBottom: 12, fontWeight: '500' },
-
     scroll: { flex: 1 },
     grid: {
       flexDirection: "row",
       flexWrap: "wrap",
       justifyContent: "space-between",
       padding: 16,
+      paddingTop: 240, // Space for the absolute header
       paddingBottom: 60,
       gap: 12,
     },
@@ -143,11 +169,17 @@ export default function Kiosk() {
           <HelpCircle size={22} color={colors.headerFg} />
       </Pressable>
 
-      <View style={s.header}>
-        <Image source={logo as any} style={s.logo} resizeMode="contain" />
-        <Text style={s.title}>Genba Intelligence</Text>
-        <Text style={s.subtitle}>Kiosco de Aplicaciones</Text>
-      </View>
+      <Animated.View style={[s.header, { height: headerHeight }]}>
+        <Animated.Image 
+            source={logo as any} 
+            style={[s.logo, { width: logoSize, height: logoSize }]} 
+            resizeMode="contain" 
+        />
+        <Animated.View style={{ opacity: titleOpacity, alignItems: 'center' }}>
+            <Text style={s.title}>Genba Intelligence</Text>
+            <Text style={s.subtitle}>Kiosco de Aplicaciones</Text>
+        </Animated.View>
+      </Animated.View>
 
       {showHelp && (
           <View style={s.tooltipOverlay}>
@@ -168,7 +200,15 @@ export default function Kiosk() {
           </View>
       )}
 
-      <ScrollView style={s.scroll} showsVerticalScrollIndicator={false}>
+      <Animated.ScrollView 
+        style={s.scroll} 
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: false }
+        )}
+      >
         <View style={s.grid}>
           {menuItems.map((item, idx) => {
             const Icon = item.icon;
@@ -189,7 +229,8 @@ export default function Kiosk() {
             );
           })}
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 }
+
